@@ -305,7 +305,12 @@ module.exports = class NodeWatcher extends EventEmitter {
             this.emitEvent(DELETE_EVENT, relativePath);
           }
         } else if (registered) {
-          this.emitEvent(CHANGE_EVENT, relativePath, stat);
+          //Consider the changes happened in less than 30 sec. Since Windows receiving change event here when there is change in accessTime.             
+          if(new Date()-stat.mtime<60000 || new Date()-stat.ctime<60000) { 
+            this.emitEvent(CHANGE_EVENT, relativePath, stat);
+          }else {
+            console.log('Change event came, but not emitted: file',file);
+          }
         } else {
           if (this.register(fullPath)) {
             this.emitEvent(ADD_EVENT, relativePath, stat);
