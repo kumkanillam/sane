@@ -260,6 +260,10 @@ module.exports = class NodeWatcher extends EventEmitter {
         }
       });
     } else {
+      if(!file.includes(".")){
+        console.log('Not allowing process change as its directory ',dir,' received in', event,' event');
+        return;
+      }
       this.processChange(dir, event, path.normalize(file));
     }
   }
